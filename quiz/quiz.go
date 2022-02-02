@@ -28,12 +28,12 @@ func New(filename string) (*Quiz, error) {
 	return &Quiz{records: records}, nil
 }
 
-func (q *Quiz) GetQuestion(index int) (question string, err error) {
-	if !(index >= 1 && index < len(q.records)-1) {
-		return "", fmt.Errorf("index %d is out of range 1..%d", index, len(q.records)-1)
+func (q *Quiz) GetQuestion(index int) (que *Question, err error) {
+	if !(index >= 1 && index < len(q.records)) {
+		return nil, fmt.Errorf("index %d is out of range 1..%d", index, len(q.records)-1)
 	}
 
-	return q.records[index][0], nil
+	return fromRecord(q.records[index])
 }
 
 func readRecords(filename string) (records [][]string, err error) {
@@ -42,5 +42,8 @@ func readRecords(filename string) (records [][]string, err error) {
 		return nil, err
 	}
 
-	return csv.NewReader(file).ReadAll()
+	records, err = csv.NewReader(file).ReadAll()
+	file.Close()
+
+	return records, err
 }
