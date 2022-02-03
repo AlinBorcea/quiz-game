@@ -30,6 +30,10 @@ func New(filename string) (*Quiz, error) {
 	return &Quiz{records: records}, nil
 }
 
+func AnswerIsCorrect(q *Question, answer int) bool {
+	return q.correct == answer
+}
+
 func (q *Quiz) GetQuestion(index int) (que *Question, err error) {
 	if !(index >= 1 && index < len(q.records)) {
 		return nil, fmt.Errorf("index %d is out of range 1..%d", index, len(q.records)-1)

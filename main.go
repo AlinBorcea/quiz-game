@@ -10,18 +10,26 @@ import (
 const filename = "questions.csv"
 
 func main() {
-	quiz, err := quiz.New(filename)
+	q, err := quiz.New(filename)
 	if err != nil {
 		log.Fatalln(err)
 	}
 
+	x := 0
+	goodAnsers := 0
 	for i := 0; i < 5; i++ {
-		que, err := quiz.GetRandom()
+		que, err := q.GetRandom()
 		if err != nil {
 			log.Fatalln(err)
 		}
 		printQuestion(que)
+		x = 4
+		if quiz.AnswerIsCorrect(que, x) {
+			goodAnsers++
+		}
 	}
+
+	fmt.Printf("%d good answers", goodAnsers)
 
 }
 
