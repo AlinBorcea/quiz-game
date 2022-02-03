@@ -1,0 +1,14 @@
+Ideas go here
+
+Contents:
+1. Quiz Records
+
+1. Quiz Records
+question,answers,correct
+Quiz records are a trio of string, []string and int.
+ - first element is the question, it must not be empty
+ - second element is a string of answers separate by commas, there should be
+at least two answers and each answer must have at least one character
+ - third element is the index of the correct answer starting from 1
+Records are validate only when needed. Make sure the csv file records are correct.
+ 

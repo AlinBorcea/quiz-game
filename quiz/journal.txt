@@ -1,0 +1,12 @@
+package quiz
+
+1. Submodule quiz.go
+It contains the interface of the package and handles every operation both on the
+quiz and question data types. It validates user input and provides results if 
+possible.
+
+2. Submodule question.go
+It translates a given record into an easier to use variable and returns 
+the variable to be used either internally, in the package, or outside. The 
+question and the possible answers are exported while the correct answer index
+is kept inside the package in order not to be abused by calling code.
