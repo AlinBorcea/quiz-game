@@ -9,7 +9,7 @@ import (
 type Question struct {
 	Que     string
 	Answers []string
-	Correct int
+	correct int
 }
 
 func fromRecord(record []string) (*Question, error) {
@@ -32,7 +32,7 @@ func fromRecord(record []string) (*Question, error) {
 		return nil, err
 	}
 
-	return &Question{Que: que, Answers: answers, Correct: correct}, nil
+	return &Question{Que: que, Answers: answers, correct: correct}, nil
 }
 
 func hasEmptyAnswer(answers []string) bool {

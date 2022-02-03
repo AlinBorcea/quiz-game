@@ -3,8 +3,10 @@ package quiz
 import (
 	"encoding/csv"
 	"fmt"
+	"math/rand"
 	"os"
 	"strings"
+	"time"
 )
 
 type Quiz struct {
@@ -34,6 +36,15 @@ func (q *Quiz) GetQuestion(index int) (que *Question, err error) {
 	}
 
 	return fromRecord(q.records[index])
+}
+
+func (q *Quiz) GetRandom() (que *Question, err error) {
+	rand.Seed(time.Now().Unix())
+	index := rand.Int() % len(q.records)
+	if index == 0 {
+		index = 1
+	}
+	return q.GetQuestion(index)
 }
 
 func readRecords(filename string) (records [][]string, err error) {

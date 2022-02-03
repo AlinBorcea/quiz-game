@@ -15,18 +15,29 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	que, err := quiz.GetQuestion(2)
-	if err != nil {
-		log.Fatalln(err)
+	for i := 0; i < 5; i++ {
+		que, err := quiz.GetRandom()
+		if err != nil {
+			log.Fatalln(err)
+		}
+		printQuestion(que)
 	}
 
-	printQuestion(que)
 }
 
 func printQuestion(q *quiz.Question) {
 	fmt.Println(q.Que)
-	for i := 0; i < len(q.Answers)-1; i += 2 {
-		fmt.Printf("%s\t%s\n", q.Answers[i], q.Answers[i+1])
+	for i := 0; i < len(q.Answers); i++ {
+		fmt.Print(q.Answers[i])
+		if i%2 == 0 {
+			fmt.Print("\t")
+		} else {
+			fmt.Println()
+		}
 	}
-	fmt.Println(q.Correct)
+	if len(q.Answers)%2 == 0 {
+		fmt.Print("\n")
+	} else {
+		fmt.Printf("\n\n")
+	}
 }
