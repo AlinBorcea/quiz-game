@@ -18,7 +18,7 @@ func main() {
 	x := 0
 	goodAnsers := 0
 	for i := 0; i < 5; i++ {
-		que, err := q.GetRandom()
+		que, err := q.RandomQuestion()
 		if err != nil {
 			log.Fatalln(err)
 		}

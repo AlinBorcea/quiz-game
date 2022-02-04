@@ -12,7 +12,7 @@ type Question struct {
 	correct int
 }
 
-func fromRecord(record []string) (*Question, error) {
+func questionFromRecord(record []string) (*Question, error) {
 	que := record[0]
 	if len(que) <= 0 {
 		return nil, fmt.Errorf("field Que of Question is empty. %d", len(que))

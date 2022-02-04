@@ -34,21 +34,21 @@ func AnswerIsCorrect(q *Question, answer int) bool {
 	return q.correct == answer
 }
 
-func (q *Quiz) GetQuestion(index int) (que *Question, err error) {
+func (q *Quiz) QuestionAt(index int) (que *Question, err error) {
 	if !(index >= 1 && index < len(q.records)) {
 		return nil, fmt.Errorf("index %d is out of range 1..%d", index, len(q.records)-1)
 	}
 
-	return fromRecord(q.records[index])
+	return questionFromRecord(q.records[index])
 }
 
-func (q *Quiz) GetRandom() (que *Question, err error) {
+func (q *Quiz) RandomQuestion() (que *Question, err error) {
 	rand.Seed(time.Now().Unix())
 	index := rand.Int() % len(q.records)
 	if index == 0 {
 		index = 1
 	}
-	return q.GetQuestion(index)
+	return q.QuestionAt(index)
 }
 
 func readRecords(filename string) (records [][]string, err error) {
