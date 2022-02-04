@@ -6,12 +6,16 @@ import (
 	"strings"
 )
 
+// A Question is an easier to use representation of a quiz record.
+// Only the Que and Answers fields are exported while the correct
+// answer is unexported to prevent abuse.
 type Question struct {
 	Que     string
 	Answers []string
 	correct int
 }
 
+// questionFromRecord takes a quiz record, checks if it is valid and returns an easier to use variable.
 func questionFromRecord(record []string) (*Question, error) {
 	que := record[0]
 	if len(que) <= 0 {
@@ -35,6 +39,7 @@ func questionFromRecord(record []string) (*Question, error) {
 	return &Question{Que: que, Answers: answers, correct: correct}, nil
 }
 
+// hasEmptyAnswer reports if there is an empty string in a []string.
 func hasEmptyAnswer(answers []string) bool {
 	for i := 0; i < len(answers); i++ {
 		if len(answers[i]) <= 0 {
