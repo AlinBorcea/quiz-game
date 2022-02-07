@@ -11,18 +11,21 @@ import (
 	"time"
 )
 
-// A Quiz variable contains the records of a quiz.
+// Quiz is a variable that contains the records of a quiz and the selected record.
 type Quiz struct {
 	records       []record
 	currentRecord int
 }
 
-// A Question is an easier to use representation of a quiz record.
+// Question contains the question string and the possible answers.
+// It is meant to be used outside the package to display information
+// not related to internal functionality.
 type Question struct {
 	Que     string
 	Answers []string
 }
 
+// record is a question and the index of the correct answer.
 type record struct {
 	que     Question
 	correct int
@@ -48,9 +51,10 @@ func New(filename string) (*Quiz, error) {
 	return &Quiz{records: records, currentRecord: 0}, nil
 }
 
+// QuestionAt returns and selects the question at index. Index must be in [0, len(q.records)).
 func (q *Quiz) QuestionAt(index int) (que *Question, err error) {
-	if !(index >= 1 && index < len(q.records)) {
-		return nil, fmt.Errorf("index %d is out of range 1..%d", index, len(q.records)-1)
+	if !(index >= 0 && index < len(q.records)) {
+		return nil, fmt.Errorf("index %d is out of range 0..%d", index, len(q.records)-1)
 	}
 
 	q.currentRecord = index
@@ -62,13 +66,14 @@ func (q *Quiz) QuestionAt(index int) (que *Question, err error) {
 func (q *Quiz) RandomQuestion() (que *Question, err error) {
 	rand.Seed(time.Now().Unix())
 	index := rand.Int() % len(q.records)
-	if index == 0 {
-		index = 1
-	}
 
 	return q.QuestionAt(index)
 }
 
+// AnswerIsCorrect checks if the given answer is correct.
+// answer is an index of Question.Answers.
+// While the slice itself starts with index 0, the answer
+// starts with index 1 as specified in the project journal.
 func (q *Quiz) AnswerIsCorrect(answer int) bool {
 	return answer == q.records[q.currentRecord].correct
 }
@@ -98,8 +103,9 @@ func readRecords(filename string) (records []record, err error) {
 	return records, err
 }
 
+// recordFromRaw takes a raw record and parses it into a record variable if possible.
 func recordFromRaw(rec []string) (*record, error) {
-	que, err := questionFromRecord(rec)
+	que, err := questionFromRawRecord(rec)
 	if err != nil {
 		return nil, err
 	}
@@ -112,8 +118,8 @@ func recordFromRaw(rec []string) (*record, error) {
 	return &record{que: *que, correct: correct}, nil
 }
 
-// questionFromRecord takes a quiz record, checks if it is valid and returns an easier to use variable.
-func questionFromRecord(record []string) (*Question, error) {
+// questionFromRawRecord takes a raw record and creates a Question variable if possible.
+func questionFromRawRecord(record []string) (*Question, error) {
 	que := record[0]
 	if len(que) <= 0 {
 		return nil, fmt.Errorf("record question is empty. %d", len(que))
