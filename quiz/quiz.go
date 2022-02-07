@@ -13,7 +13,7 @@ import (
 
 // A Quiz variable contains the records of a quiz.
 type Quiz struct {
-	records       [][]string
+	records       []record
 	currentRecord int
 }
 
@@ -21,6 +21,11 @@ type Quiz struct {
 type Question struct {
 	Que     string
 	Answers []string
+}
+
+type record struct {
+	que     Question
+	correct int
 }
 
 // New tries to create a Quiz variable and returns it if no errors
@@ -36,11 +41,11 @@ func New(filename string) (*Quiz, error) {
 		return nil, err
 	}
 
-	if !(len(records) > 1) {
-		return nil, fmt.Errorf("there are no records in file `%s`", filename)
+	if !(len(records) > 0) {
+		return nil, fmt.Errorf("there are no records in file `%s` -> %d", filename, len(records))
 	}
 
-	return &Quiz{records: records}, nil
+	return &Quiz{records: records, currentRecord: 1}, nil
 }
 
 func (q *Quiz) QuestionAt(index int) (que *Question, err error) {
@@ -49,7 +54,7 @@ func (q *Quiz) QuestionAt(index int) (que *Question, err error) {
 	}
 
 	q.currentRecord = index
-	return questionFromRecord(q.records[index])
+	return &q.records[index].que, nil
 }
 
 // RandomQuestion uses rand to generate a random index and returns
@@ -65,56 +70,66 @@ func (q *Quiz) RandomQuestion() (que *Question, err error) {
 }
 
 func (q *Quiz) AnswerIsCorrect(answer int) bool {
-	correct, err := strconv.Atoi(q.records[q.currentRecord][2])
-	if err != nil || answer != correct {
-		return false
-	}
-	return true
+	return answer == q.records[q.currentRecord].correct
 }
 
 // readRecords takes a filename and tries to read all the records of the file.
 // The file should be a csv file otherwise the operation might fail.
-func readRecords(filename string) (records [][]string, err error) {
+func readRecords(filename string) (records []record, err error) {
 	file, err := os.Open(filename)
 	if err != nil {
 		return nil, err
 	}
 
-	records, err = csv.NewReader(file).ReadAll()
-	file.Close()
+	rawRecords, err := csv.NewReader(file).ReadAll()
+	if err != nil {
+		return nil, err
+	}
 
+	for i := 1; i < len(rawRecords); i++ {
+		record, err := recordFromRaw(rawRecords[i])
+		if err != nil {
+			file.Close()
+			return nil, err
+		}
+		records = append(records, *record)
+	}
+
+	file.Close()
 	return records, err
+}
+
+func recordFromRaw(rec []string) (*record, error) {
+	que, err := questionFromRecord(rec)
+	if err != nil {
+		return nil, err
+	}
+
+	correct, err := strconv.Atoi(rec[2])
+	if err != nil {
+		return nil, err
+	}
+
+	return &record{que: *que, correct: correct}, nil
 }
 
 // questionFromRecord takes a quiz record, checks if it is valid and returns an easier to use variable.
 func questionFromRecord(record []string) (*Question, error) {
-	if err := recordIsValid(record); err != nil {
-		return nil, err
-	}
-
-	return &Question{record[0], strings.Split(record[1], ",")}, nil
-}
-
-func recordIsValid(record []string) error {
 	que := record[0]
 	if len(que) <= 0 {
-		return fmt.Errorf("record question is empty. %d", len(que))
+		return nil, fmt.Errorf("record question is empty. %d", len(que))
 	}
 
 	if len(record[1]) <= 0 {
-		return errors.New("record has no answers")
+		return nil, errors.New("record has no answers")
 	}
 
 	answers := strings.Split(record[1], ",")
 	if hasEmptyAnswer(answers) {
-		return errors.New("an answer has invalid length")
+		return nil, errors.New("an answer has invalid length")
 	}
 
-	if _, err := strconv.Atoi(record[2]); err != nil {
-		return err
-	}
-
-	return nil
+	return &Question{record[0], answers}, nil
 }
 
 // hasEmptyAnswer reports if there is an empty string in a []string.
