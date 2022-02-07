@@ -80,6 +80,7 @@ func readRecords(filename string) (records []record, err error) {
 	if err != nil {
 		return nil, err
 	}
+	defer file.Close()
 
 	rawRecords, err := csv.NewReader(file).ReadAll()
 	if err != nil {
@@ -89,13 +90,11 @@ func readRecords(filename string) (records []record, err error) {
 	for i := 1; i < len(rawRecords); i++ {
 		record, err := recordFromRaw(rawRecords[i])
 		if err != nil {
-			file.Close()
 			return nil, err
 		}
 		records = append(records, *record)
 	}
 
-	file.Close()
 	return records, err
 }
 
