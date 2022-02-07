@@ -45,7 +45,7 @@ func New(filename string) (*Quiz, error) {
 		return nil, fmt.Errorf("there are no records in file `%s` -> %d", filename, len(records))
 	}
 
-	return &Quiz{records: records, currentRecord: 1}, nil
+	return &Quiz{records: records, currentRecord: 0}, nil
 }
 
 func (q *Quiz) QuestionAt(index int) (que *Question, err error) {
