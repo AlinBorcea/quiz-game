@@ -2,6 +2,20 @@ package quiz
 
 import "testing"
 
+func Test_readRecords_filenameIsEmpty(t *testing.T) {
+	if _, err := readRecords(""); err == nil {
+		t.FailNow()
+	}
+}
+
+func Test_readRecords_filenameGood(t *testing.T) {
+	// full path should be used here
+	filename := "C:\\Users\\alin\\dev\\Go\\quiz-game\\questions.csv"
+	if _, err := readRecords(filename); err != nil {
+		t.FailNow()
+	}
+}
+
 func Test_recordFromRaw_EmptyRecord(t *testing.T) {
 	var rec []string
 	if _, err := recordFromRaw(rec); err == nil {
