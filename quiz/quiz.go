@@ -139,6 +139,10 @@ func questionFromRawRecord(record []string) (*Question, error) {
 
 // hasEmptyAnswer reports if there is an empty string in a []string.
 func hasEmptyAnswer(answers []string) bool {
+	if len(answers) == 0 {
+		return true
+	}
+
 	for i := 0; i < len(answers); i++ {
 		if len(answers[i]) <= 0 {
 			return true
