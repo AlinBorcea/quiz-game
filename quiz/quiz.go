@@ -120,6 +120,10 @@ func recordFromRaw(rec []string) (*record, error) {
 
 // questionFromRawRecord takes a raw record and creates a Question variable if possible.
 func questionFromRawRecord(record []string) (*Question, error) {
+	if len(record) < 2 {
+		return nil, fmt.Errorf("record must have at least 2 elements. it has %d", len(record))
+	}
+
 	que := record[0]
 	if len(que) <= 0 {
 		return nil, fmt.Errorf("record question is empty. %d", len(que))
