@@ -27,8 +27,9 @@ type Question struct {
 
 // record is a question and the index of the correct answer.
 type record struct {
-	que     Question
-	correct int
+	que      Question
+	correct  int
+	answered bool
 }
 
 // New tries to create a Quiz variable and returns it if no errors
