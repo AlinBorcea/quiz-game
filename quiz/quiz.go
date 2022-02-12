@@ -85,6 +85,11 @@ func (q *Quiz) Answer(answer int) bool {
 	return answer == q.records[q.currentRecord].correct
 }
 
+// Len returns the number of records in quiz.
+func (q *Quiz) Len() int {
+	return len(q.records)
+}
+
 // readRecords takes a filename and tries to read all the records of the file.
 // The file should be a csv file otherwise the operation might fail.
 func readRecords(filename string) (records []record, err error) {
