@@ -24,7 +24,7 @@ func main() {
 		}
 		printQuestion(que)
 		x = 4
-		if q.AnswerIsCorrect(x) {
+		if q.Answer(x) {
 			goodAnsers++
 		}
 	}
