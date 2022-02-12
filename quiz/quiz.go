@@ -71,6 +71,15 @@ func (q *Quiz) RandomQuestion() (que *Question, err error) {
 	return q.QuestionAt(index)
 }
 
+func (q *Quiz) Answer(answer int) bool {
+	if q.records[q.currentRecord].answered {
+		return false
+	}
+
+	q.records[q.currentRecord].answered = true
+	return q.AnswerIsCorrect(answer)
+}
+
 // AnswerIsCorrect checks if the given answer is correct.
 // answer is an index of Question.Answers.
 // While the slice itself starts with index 0, the answer
