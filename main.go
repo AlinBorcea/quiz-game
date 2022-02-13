@@ -1,8 +1,12 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"log"
+	"os"
+	"strconv"
+	"strings"
 
 	"github.com/AlinBorcea/quiz-game/quiz"
 )
@@ -15,22 +19,34 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	x := 0
-	goodAnsers := 0
-	for i := 0; i < 5; i++ {
-		que, err := q.RandomQuestion()
+	runTest(q)
+}
+
+func runTest(q *quiz.Quiz) {
+	reader := bufio.NewReader(os.Stdin)
+
+	for i := 0; i < q.Len(); i++ {
+		que, err := q.QuestionAt(i)
 		if err != nil {
-			log.Fatalln(err)
+			break
 		}
+
 		printQuestion(que)
-		x = 4
-		if q.Answer(x) {
-			goodAnsers++
+		input, err := reader.ReadString('\n')
+		if err != nil {
+			panic(err)
 		}
+
+		input = strings.TrimSuffix(input, "\n")
+		input = strings.TrimSuffix(input, "\r")
+		ans, err := strconv.Atoi(input)
+		if err != nil {
+			panic(err)
+		}
+
+		q.Answer(ans)
+
 	}
-
-	fmt.Printf("%d good answers", goodAnsers)
-
 }
 
 func printQuestion(q *quiz.Question) {
