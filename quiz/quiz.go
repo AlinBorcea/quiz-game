@@ -28,9 +28,9 @@ type Question struct {
 
 // record is a question and the index of the correct answer.
 type record struct {
-	que      Question
-	correct  int
-	answered bool
+	que          Question
+	correctIndex int
+	answered     bool
 }
 
 // New tries to create a Quiz variable and returns it if no errors
@@ -81,9 +81,14 @@ func (q *Quiz) Answer(answer int) bool {
 	if q.records[q.currentRecord].answered {
 		return false
 	}
-
 	q.records[q.currentRecord].answered = true
-	return answer == q.records[q.currentRecord].correct
+
+	correct := answer == q.records[q.currentRecord].correctIndex
+	if correct {
+		q.correctAnswers++
+	}
+
+	return correct
 }
 
 // Len returns the number of records in quiz.
@@ -128,7 +133,7 @@ func recordFromRaw(rec []string) (*record, error) {
 		return nil, err
 	}
 
-	return &record{que: *que, correct: correct}, nil
+	return &record{que: *que, correctIndex: correct}, nil
 }
 
 // questionFromRawRecord takes a raw record and creates a Question variable if possible.
