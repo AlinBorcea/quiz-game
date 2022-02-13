@@ -13,8 +13,9 @@ import (
 
 // Quiz is a variable that contains the records of a quiz and the selected record.
 type Quiz struct {
-	records       []record
-	currentRecord int
+	records        []record
+	currentRecord  int
+	correctAnswers int
 }
 
 // Question contains the question string and the possible answers.
