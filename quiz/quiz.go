@@ -56,6 +56,10 @@ func New(filename string) (*Quiz, error) {
 
 // QuestionAt returns and selects the question at index. Index must be in [0, len(q.records)).
 func (q *Quiz) QuestionAt(index int) (que *Question, err error) {
+	if index < 0 || index >= len(q.records) {
+		return nil, fmt.Errorf("index %d out of range", index)
+	}
+
 	if q.records[index].answered {
 		return nil, fmt.Errorf("question already answered")
 	}
@@ -106,6 +110,13 @@ func (q *Quiz) Answer(answer int) bool {
 // Len returns the number of records in quiz.
 func (q *Quiz) Len() int {
 	return len(q.records)
+}
+
+func (q *Quiz) Result() int {
+	if q.questionsLeft > 0 {
+		return -1
+	}
+	return q.correctAnswers
 }
 
 func randomIndex(max int) int {
