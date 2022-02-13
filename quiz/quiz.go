@@ -56,14 +56,10 @@ func New(filename string) (*Quiz, error) {
 
 // QuestionAt returns and selects the question at index. Index must be in [0, len(q.records)).
 func (q *Quiz) QuestionAt(index int) (que *Question, err error) {
-	if !(index >= 0 && index < len(q.records)) {
-		return nil, fmt.Errorf("index %d is out of range 0..%d", index, len(q.records)-1)
-	}
-
-	q.currentRecord = index
 	if q.records[index].answered {
 		return nil, fmt.Errorf("question already answered")
 	}
+	q.currentRecord = index
 
 	return &q.records[index].que, nil
 }
@@ -71,10 +67,20 @@ func (q *Quiz) QuestionAt(index int) (que *Question, err error) {
 // RandomQuestion uses rand to generate a random index and returns
 // the result of a call to QuestionAt.
 func (q *Quiz) RandomQuestion() (que *Question, err error) {
-	rand.Seed(time.Now().Unix())
-	index := rand.Int() % len(q.records)
+	if q.questionsLeft <= 0 {
+		return nil, fmt.Errorf("no questions left")
+	}
 
-	return q.QuestionAt(index)
+	rand.Seed(time.Now().Unix())
+
+	index := randomIndex(len(q.records))
+	for q.records[index].answered {
+		index = randomIndex(len(q.records))
+	}
+
+	q.currentRecord = index
+
+	return &q.records[index].que, nil
 }
 
 // Answer checks if the given answer is correct and marks the
@@ -100,6 +106,10 @@ func (q *Quiz) Answer(answer int) bool {
 // Len returns the number of records in quiz.
 func (q *Quiz) Len() int {
 	return len(q.records)
+}
+
+func randomIndex(max int) int {
+	return rand.Int() % max
 }
 
 // readRecords takes a filename and tries to read all the records of the file.
