@@ -16,6 +16,7 @@ type Quiz struct {
 	records        []record
 	currentRecord  int
 	correctAnswers int
+	questionsLeft  int
 }
 
 // Question contains the question string and the possible answers.
@@ -50,7 +51,7 @@ func New(filename string) (*Quiz, error) {
 		return nil, fmt.Errorf("there are no records in file `%s` -> %d", filename, len(records))
 	}
 
-	return &Quiz{records: records, currentRecord: 0}, nil
+	return &Quiz{records: records, currentRecord: 0, questionsLeft: len(records)}, nil
 }
 
 // QuestionAt returns and selects the question at index. Index must be in [0, len(q.records)).
@@ -60,6 +61,10 @@ func (q *Quiz) QuestionAt(index int) (que *Question, err error) {
 	}
 
 	q.currentRecord = index
+	if q.records[index].answered {
+		return nil, fmt.Errorf("question already answered")
+	}
+
 	return &q.records[index].que, nil
 }
 
@@ -82,6 +87,7 @@ func (q *Quiz) Answer(answer int) bool {
 		return false
 	}
 	q.records[q.currentRecord].answered = true
+	q.questionsLeft--
 
 	correct := answer == q.records[q.currentRecord].correctIndex
 	if correct {
