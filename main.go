@@ -34,7 +34,7 @@ func runTest(q *quiz.Quiz) {
 			break
 		}
 
-		printQuestion(que)
+		printQuestion(&que)
 		ans, err = readInput(reader)
 		if err != nil {
 			panic(err)
