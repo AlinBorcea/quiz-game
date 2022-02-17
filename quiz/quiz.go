@@ -91,10 +91,11 @@ func (q *Quiz) RandomQuestion() (Question, error) {
 // answer is an index of Question.Answers.
 // While the slice itself starts with index 0, the answer
 // starts with index 1 as specified in the project journal.
-func (q *Quiz) Answer(answer int) bool {
+func (q *Quiz) Answer(answer int) {
 	if q.records[q.currentRecord].answered {
-		return false
+		return
 	}
+
 	q.records[q.currentRecord].answered = true
 	q.questionsLeft--
 
@@ -102,8 +103,6 @@ func (q *Quiz) Answer(answer int) bool {
 	if correct {
 		q.correctAnswers++
 	}
-
-	return correct
 }
 
 // Len returns the number of records in quiz.
