@@ -51,7 +51,7 @@ func runTestRandom(q *quiz.Quiz) {
 	reader := bufio.NewReader(os.Stdin)
 	que, err := q.RandomQuestion()
 	for err == nil {
-		printQuestion(que)
+		printQuestion(&que)
 		ans, err = readInput(reader)
 		q.Answer(ans)
 

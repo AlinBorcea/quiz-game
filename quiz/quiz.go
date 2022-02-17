@@ -70,21 +70,20 @@ func (q *Quiz) QuestionAt(index int) (Question, error) {
 
 // RandomQuestion uses rand to generate a random index and returns
 // the result of a call to QuestionAt.
-func (q *Quiz) RandomQuestion() (que *Question, err error) {
+func (q *Quiz) RandomQuestion() (Question, error) {
 	if q.questionsLeft <= 0 {
-		return nil, fmt.Errorf("no questions left")
+		return Question{}, fmt.Errorf("no questions left")
 	}
 
 	rand.Seed(time.Now().Unix())
 
-	index := randomIndex(len(q.records))
+	index := rand.Int() % len(q.records)
 	for q.records[index].answered {
-		index = randomIndex(len(q.records))
+		index = rand.Int() % len(q.records)
 	}
 
 	q.currentRecord = index
-
-	return &q.records[index].que, nil
+	return q.records[index].que, nil
 }
 
 // Answer checks if the given answer is correct and marks the
@@ -117,10 +116,6 @@ func (q *Quiz) Result() int {
 		return -1
 	}
 	return q.correctAnswers
-}
-
-func randomIndex(max int) int {
-	return rand.Int() % max
 }
 
 // readRecords takes a filename and tries to read all the records of the file.
