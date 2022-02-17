@@ -51,7 +51,7 @@ func New(filename string) (*Quiz, error) {
 		return nil, fmt.Errorf("there are no records in file `%s` -> %d", filename, len(records))
 	}
 
-	return &Quiz{records: records, currentRecord: 0, questionsLeft: len(records)}, nil
+	return &Quiz{records: records, currentRecord: 0, correctAnswers: 0, questionsLeft: len(records)}, nil
 }
 
 // QuestionAt returns and selects the question at index. Index must be in [0, len(q.records)).
