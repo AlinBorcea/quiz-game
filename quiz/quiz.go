@@ -139,7 +139,7 @@ func readRecords(filename string) (records []record, err error) {
 		records = append(records, *record)
 	}
 
-	return records, err
+	return records, nil
 }
 
 // recordFromRaw takes a raw record and parses it into a record variable if possible.
