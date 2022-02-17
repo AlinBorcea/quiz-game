@@ -154,30 +154,30 @@ func recordFromRaw(rec []string) (record, error) {
 		return record{}, err
 	}
 
-	return record{que: *que, correctIndex: correct, answered: false}, nil
+	return record{que: que, correctIndex: correct, answered: false}, nil
 }
 
 // questionFromRawRecord takes a raw record and creates a Question variable if possible.
-func questionFromRawRecord(record []string) (*Question, error) {
+func questionFromRawRecord(record []string) (Question, error) {
 	if len(record) < 2 {
-		return nil, fmt.Errorf("record must have at least 2 elements. it has %d", len(record))
+		return Question{}, fmt.Errorf("record must have at least 2 elements. it has %d", len(record))
 	}
 
 	que := record[0]
 	if len(que) <= 0 {
-		return nil, fmt.Errorf("record question is empty. %d", len(que))
+		return Question{}, fmt.Errorf("record question is empty. %d", len(que))
 	}
 
 	if len(record[1]) <= 0 {
-		return nil, errors.New("record has no answers")
+		return Question{}, errors.New("record has no answers")
 	}
 
 	answers := strings.Split(record[1], ",")
 	if hasEmptyAnswer(answers) {
-		return nil, errors.New("an answer has invalid length")
+		return Question{}, errors.New("an answer has invalid length")
 	}
 
-	return &Question{record[0], answers}, nil
+	return Question{Que: que, Answers: answers}, nil
 }
 
 // hasEmptyAnswer reports if there is an empty string in a []string.
