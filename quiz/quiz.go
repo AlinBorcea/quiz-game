@@ -136,25 +136,25 @@ func readRecords(filename string) (records []record, err error) {
 		if err != nil {
 			return nil, err
 		}
-		records = append(records, *record)
+		records = append(records, record)
 	}
 
 	return records, nil
 }
 
 // recordFromRaw takes a raw record and parses it into a record variable if possible.
-func recordFromRaw(rec []string) (*record, error) {
+func recordFromRaw(rec []string) (record, error) {
 	que, err := questionFromRawRecord(rec)
 	if err != nil {
-		return nil, err
+		return record{}, err
 	}
 
 	correct, err := strconv.Atoi(rec[2])
 	if err != nil {
-		return nil, err
+		return record{}, err
 	}
 
-	return &record{que: *que, correctIndex: correct}, nil
+	return record{que: *que, correctIndex: correct, answered: false}, nil
 }
 
 // questionFromRawRecord takes a raw record and creates a Question variable if possible.
