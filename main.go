@@ -11,38 +11,30 @@ import (
 	"github.com/AlinBorcea/quiz-game/quiz"
 )
 
-const filename = "questions.csv"
+const (
+	queFilename   = "questions.csv"
+	scoreFilename = "scores.csv"
+)
 
 func main() {
-	q, err := quiz.New(filename)
+	q, err := quiz.New(queFilename)
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	//runTest(q)
 	runTestRandom(q)
-	fmt.Printf("Result is %d\n", q.Result())
-}
 
-func runTest(q *quiz.Quiz) {
 	reader := bufio.NewReader(os.Stdin)
-
-	var ans int
-	for i := 0; i < q.Len(); i++ {
-		que, err := q.QuestionAt(i)
-		if err != nil {
-			break
-		}
-
-		printQuestion(&que)
-		ans, err = readInput(reader)
-		if err != nil {
-			panic(err)
-		}
-
-		q.Answer(ans)
-
+	nameSlice, err := reader.ReadBytes('\n')
+	if err != nil {
+		log.Fatalln(err)
 	}
+
+	name := string(nameSlice)
+	name = strings.TrimSuffix(name, "\n")
+	name = strings.TrimSuffix(name, "\r")
+
+	postResult(name, q.Result())
 }
 
 func runTestRandom(q *quiz.Quiz) {
@@ -52,7 +44,7 @@ func runTestRandom(q *quiz.Quiz) {
 	que, err := q.RandomQuestion()
 	for err == nil {
 		printQuestion(&que)
-		ans, err = readInput(reader)
+		ans, _ = readInput(reader)
 		q.Answer(ans)
 
 		que, err = q.RandomQuestion()
@@ -90,4 +82,8 @@ func readInput(reader *bufio.Reader) (int, error) {
 	}
 
 	return ans, nil
+}
+
+func postResult(name string, result int) {
+	fmt.Printf("%v -> %d\n", name, result)
 }
