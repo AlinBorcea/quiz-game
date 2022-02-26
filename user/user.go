@@ -3,6 +3,7 @@ package user
 import (
 	"encoding/csv"
 	"fmt"
+	"io/fs"
 	"os"
 	"strconv"
 	"strings"
@@ -23,7 +24,7 @@ func PostUserScore(user *User, filename string) error {
 		return fmt.Errorf("file %s is not a csv file", filename)
 	}
 
-	file, err := os.Open(filename)
+	file, err := os.OpenFile(filename, os.O_APPEND, fs.ModeAppend)
 	if err != nil {
 		return err
 	}
@@ -52,8 +53,10 @@ func userIsValid(user *User) bool {
 
 func userAsRecord(user *User) []string {
 	rec := make([]string, 3)
+	format := "2006-01-02 15:04:05"
+
 	rec[0] = user.Name
-	rec[1] = time.Now().String()
+	rec[1] = time.Now().Format(format)
 	rec[2] = strconv.Itoa(user.Score)
 	return rec
 }
