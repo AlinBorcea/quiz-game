@@ -1,8 +1,12 @@
 package user
 
 import (
+	"encoding/csv"
 	"fmt"
+	"os"
+	"strconv"
 	"strings"
+	"time"
 )
 
 type User struct {
@@ -19,6 +23,18 @@ func PostUserScore(user *User, filename string) error {
 		return fmt.Errorf("file %s is not a csv file", filename)
 	}
 
+	file, err := os.Open(filename)
+	if err != nil {
+		return err
+	}
+
+	writer := csv.NewWriter(file)
+	err = writer.Write(userAsRecord(user))
+	if err != nil {
+		return err
+	}
+
+	writer.Flush()
 	return nil
 }
 
@@ -32,4 +48,12 @@ func userIsValid(user *User) bool {
 	}
 
 	return true
+}
+
+func userAsRecord(user *User) []string {
+	rec := make([]string, 3)
+	rec[0] = user.Name
+	rec[1] = time.Now().String()
+	rec[2] = strconv.Itoa(user.Score)
+	return rec
 }

@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/AlinBorcea/quiz-game/quiz"
+	"github.com/AlinBorcea/quiz-game/user"
 )
 
 const (
@@ -34,7 +35,9 @@ func main() {
 	name = strings.TrimSuffix(name, "\n")
 	name = strings.TrimSuffix(name, "\r")
 
-	postResult(name, q.Result())
+	if err = postResult(name, q.Result()); err != nil {
+		log.Fatalln(err)
+	}
 }
 
 func runTestRandom(q *quiz.Quiz) {
@@ -84,6 +87,7 @@ func readInput(reader *bufio.Reader) (int, error) {
 	return ans, nil
 }
 
-func postResult(name string, result int) {
-	fmt.Printf("%v -> %d\n", name, result)
+func postResult(name string, result int) error {
+	u := user.User{Name: name, Score: result}
+	return user.PostUserScore(&u, scoreFilename)
 }
