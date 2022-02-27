@@ -23,31 +23,58 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	runTestRandom(q)
-
 	reader := bufio.NewReader(os.Stdin)
-	nameSlice, err := reader.ReadBytes('\n')
+	runLoop(q, reader)
+
+	name, err := readString(reader)
 	if err != nil {
 		log.Fatalln(err)
 	}
-
-	name := string(nameSlice)
-	name = strings.TrimSuffix(name, "\n")
-	name = strings.TrimSuffix(name, "\r")
 
 	if err = postResult(name, q.Result()); err != nil {
 		log.Fatalln(err)
 	}
 }
 
-func runTestRandom(q *quiz.Quiz) {
+func runLoop(q *quiz.Quiz, reader *bufio.Reader) {
+	var option int = 1
+	var err error = nil
+
+	for option != 0 {
+		switch option {
+		case 0:
+			continue
+		case 1:
+			printMenu()
+		case 2:
+			fmt.Println("leaderboard")
+		case 3:
+			runTestRandom(q, reader)
+		default:
+			fmt.Println("does not exist")
+		}
+
+		option, err = readInt(reader)
+		if err != nil {
+			break
+		}
+	}
+}
+
+func printMenu() {
+	fmt.Println("0 -> exit")
+	fmt.Println("1 -> menu")
+	fmt.Println("2 -> leaderboard")
+	fmt.Println("3 -> quiz")
+}
+
+func runTestRandom(q *quiz.Quiz, reader *bufio.Reader) {
 	var ans int
 
-	reader := bufio.NewReader(os.Stdin)
 	que, err := q.RandomQuestion()
 	for err == nil {
 		printQuestion(&que)
-		ans, _ = readInput(reader)
+		ans, _ = readInt(reader)
 		q.Answer(ans)
 
 		que, err = q.RandomQuestion()
@@ -71,7 +98,7 @@ func printQuestion(q *quiz.Question) {
 	}
 }
 
-func readInput(reader *bufio.Reader) (int, error) {
+func readInt(reader *bufio.Reader) (int, error) {
 	input, err := reader.ReadString('\n')
 	if err != nil {
 		return 0, err
@@ -85,6 +112,18 @@ func readInput(reader *bufio.Reader) (int, error) {
 	}
 
 	return ans, nil
+}
+
+func readString(reader *bufio.Reader) (string, error) {
+	str, err := reader.ReadString('\n')
+	if err != nil {
+		return "", err
+	}
+
+	str = strings.TrimSuffix(str, "\n")
+	str = strings.TrimSuffix(str, "\r")
+
+	return str, nil
 }
 
 func postResult(name string, result int) error {
